@@ -20,6 +20,7 @@ app.get('/',(req,res) =>{
 app.use('/notes',notesRoute )
 app.use('/', auth)
 
+// mongodb connection
 mongoose.connect('mongodb://localhost:27017/')
 .then(()=> console.log('connection to mongodb successfull'))
 .catch(() => console.log('connetion to mongodb unsuccessfull'))

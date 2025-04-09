@@ -1,7 +1,8 @@
 const express = require('express')
 const User = require('../models/user')
+const bcrypt = require('bcryptjs')
 
-const router = express.router()
+const router = express.Router()
 
 router.post('/signup', async (req,res) => {
     try{
@@ -18,3 +19,24 @@ router.post('/signup', async (req,res) => {
     }
 })
 
+router.post('/login',async(req,res)=>{
+    try {
+        const {email,password} = req.body
+        const user = await User.findOne({email})
+        console.log(user.password);
+        
+        if(!user) return res.status(404).json({message:'User not found'})
+
+        const isMatch = await bcrypt.compare(password,user.password)
+        console.log(password);
+        
+        if(!isMatch) return res.status(401).json({message:'invalid credentials'})
+
+            res.send('login successfull')
+    
+    } catch (err) {
+      res.status(500).json({message:'internal server error',error: err.message})
+    }
+})
+
+module.exports = router

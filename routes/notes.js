@@ -1,5 +1,5 @@
 const express = require('express')
-
+const Note = require('../models/notes')
 const router = express.Router()
 
 
@@ -11,16 +11,28 @@ router.use('/',(req,res,next) =>{
     
 })
 
-router.post('/',(req,res) => {
-    const note = {id:Date.now(), ...req.body}
-    notes.push(note)
-    res.send(`a note with id: ${note.id} was created`)
+router.post('/',async(req,res) => {
+    try {
+        const {title, content} = req.body
+        const note = new Note({title,content})
+        await note.save()
+        res.send('note created successfully')
+        
+    } catch (error) {
+        res.status(501).json({message:'server error', error:error.message})
+    }
 })
 
 
-router.get('/',(req,res) =>{
-    res.send(notes)
-    // console.log(req);
+router.get('/',async(req,res) =>{
+try {
+        const notes = await Note
+    
+        res.send(notes)
+        // console.log(req);
+} catch (error) {
+        res.status(501).json({message:'server error', error:error.message})
+    }
 })
 
 
